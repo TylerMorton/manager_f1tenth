@@ -7,8 +7,8 @@ COMPOSE_PATH = "f1tenth_gym_ros/docker-compose.yml"
 
 
 def env_setup():
-    pattern = r"- \.:/sim_ws"
-    replacement = "- ./f1tenth_labs_openrepo/lab1_ws/src/:/sim_ws"
+    pattern = r"- \.:/sim_ws/src/f1tenth_gym_ros"
+    replacement = "- ./f1tenth_labs_openrepo/lab1_ws/src/:/sim_ws/src/"
 
     os.system(
         "git clone --quiet https://github.com/f1tenth/f1tenth_gym_ros.git > /dev/null"
@@ -20,6 +20,7 @@ def env_setup():
 
     file = open(COMPOSE_PATH, "r")
     content = file.read()
+    # print(re.search(pattern, content, flags=re.DOTALL))
     content = re.sub(pattern, replacement, content, flags=re.DOTALL)
     file = open(COMPOSE_PATH, "w")
     file.write(content)
