@@ -38,6 +38,7 @@ def destroy_container():
 
 
 def adjust_compose():
+    destroy_container()
     file = open(COMPOSE_PATH, "r")
     full_content = []
 
@@ -78,10 +79,12 @@ def main():
         print("\nWelcome to the f1tenth manager.\n")
         print("What are you trying to do?\n\n")
         print("1. Setup my environment for me please.")
-        print("2. I would like to work on lab [blank].")
+        print(
+            "2. I would like to work on lab [blank]. CAUTION THIS closes any processes running in an open container"
+        )
         print("3. Build container.")
         print(
-            "4. Destroy container. CAUTION: This closes any processes running in the container."
+            "4. Destroy container. CAUTION: This closes any processes running in an open container."
         )
         print("5. Enter container shell.")
         print("0. I'm done, Goodbye.")
