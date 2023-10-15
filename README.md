@@ -10,7 +10,7 @@ A program that sets up your developer environment for you! As well as manages yo
 1. Clone this repo.
 2. Run this command:
 ```
-cd manager_f1tenth && chmod +x setup.py
+cd manager_f1tenth && chmod +x manager_f1tenth.py
 ```
 4. Run the script via ```./manager_f1tenth.py```
 
