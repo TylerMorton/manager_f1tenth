@@ -72,7 +72,7 @@ def adjust_compose():
 
 
 def exec_container():
-    os.system("docker exec -it f1tenth_gym_ros_sim_1 /bin/bash")
+    os.system("docker exec -it f1tenth_gym_ros-sim-1 /bin/bash")
 
 
 def main():
