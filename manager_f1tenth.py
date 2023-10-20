@@ -35,14 +35,14 @@ def adjust_compose():
     full_content = []
 
     print(
-        "This program updates your docker-compose file to the lab you want to work on."
+        "\nThis program updates your docker-compose file to the lab you want to work on."
     )
     print(
-        "If you don't want to update your docker-compose file please exit this program (control + c)"
+        "\nIf you don't want to update your docker-compose file please exit this program (control + c)"
     )
 
     while True:
-        print("which lab do you want to work on?.. Or if you want to go back type 'b'")
+        print("\nwhich lab do you want to work on?.. Or if you want to go back type 'b'\n")
         inp = input()
         if inp == "b":
             return
@@ -63,7 +63,7 @@ def adjust_compose():
 
 
 def exec_container():
-    os.system("docker exec -it f1tenth_gym_ros_sim_1 /bin/bash")
+    os.system("docker exec -it f1tenth_gym_ros-sim-1 /bin/bash")
 
 
 def main():
