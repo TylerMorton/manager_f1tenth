@@ -19,13 +19,13 @@ def env_setup():
 
 def build_container():
     os.system(
-        "docker-compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros up -d --quiet-pull "
+        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros up -d --quiet-pull "
     )
 
 
 def destroy_container():
     os.system(
-        "docker-compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros down"
+        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros down"
     )
 
 
