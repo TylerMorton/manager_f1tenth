@@ -3,7 +3,7 @@ A program that sets up your developer environment for you! As well as manages yo
 
 ## Make sure you have the following dependencies installed:
 - Python3
-- Docker Desktop (docker, docker-compose)
+- Docker Desktop (docker, docker compose(ships along with Docker Desktop))
 - Git
 
 ## Install Steps
