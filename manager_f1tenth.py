@@ -1,31 +1,46 @@
 #!/usr/bin/python3
 
 import os, sys, re
+import subprocess
 
+# from subprocess import CalledProcessError
 
 COMPOSE_PATH = "f1tenth_gym_ros/docker-compose.yml"
 
 
+def process_error(cmd, statement=None):
+    try:
+        subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
+    except subprocess.CalledProcessError as err:
+        if statement:
+            print(statement)
+        print(f"Error statement: {err.stderr}\n")
+        sys.exit(1)
+
+
 def env_setup():
-    os.system(
+    process_error(
         "git clone --quiet https://github.com/f1tenth/f1tenth_gym_ros.git > /dev/null"
     )
-    os.system(
+    process_error(
         "git clone --quiet https://github.com/f1tenth/f1tenth_labs_openrepo.git > /dev/null"
     )
-    os.system("mv f1tenth_labs_openrepo f1tenth_gym_ros/")
-    os.system("cp docker-compose.yml f1tenth_gym_ros/docker-compose.yml")
+    process_error("mv f1tenth_labs_openrepo f1tenth_gym_ros/")
+    process_error("cp docker-compose.yml f1tenth_gym_ros/docker-compose.yml")
 
 
 def build_container():
-    os.system(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros up -d --quiet-pull "
+    process_error(
+        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros up -d --quiet-pull",
+        "\nUnable to run docker command. Is docker running?\n",
     )
+    print("\nDocker container built.")
 
 
 def destroy_container():
-    os.system(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros down"
+    process_error(
+        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros down",
+        "\nContainer doesn't exist.",
     )
 
 
@@ -42,7 +57,9 @@ def adjust_compose():
     )
 
     while True:
-        print("\nwhich lab do you want to work on?.. Or if you want to go back type 'b'\n")
+        print(
+            "\nwhich lab do you want to work on?.. Or if you want to go back type 'b'\n"
+        )
         inp = input()
         if inp == "b":
             return
@@ -63,12 +80,15 @@ def adjust_compose():
 
 
 def exec_container():
-    os.system("docker exec -it f1tenth_gym_ros-sim-1 /bin/bash")
+    process_error(
+        "docker exec -it f1tenth_gym_ros-sim-1 /bin/bash",
+        "\nContainer doesn't exist. Try building the container first [Option 3]",
+    )
 
 
 def main():
+    print("\nWelcome to the f1tenth manager.\n")
     while True:
-        print("\nWelcome to the f1tenth manager.\n")
         print("What are you trying to do?\n\n")
         print("1. Setup my environment for me please.")
         print(
