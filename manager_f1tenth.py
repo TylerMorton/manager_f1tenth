@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-import sys, re
+import sys
+import re
 import subprocess
 
 # from subprocess import CalledProcessError
