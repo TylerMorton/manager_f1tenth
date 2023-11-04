@@ -2,11 +2,29 @@
 
 import sys
 import re
+import json
+import atexit
 import subprocess
 
-# from subprocess import CalledProcessError
-
 COMPOSE_PATH = "f1tenth_gym_ros/docker-compose.yml"
+CURRENT_LAB = "current_lab"
+CONFIG = None
+
+
+def write_config():
+    print("Writing out config...")
+
+    with open("config.json", "w") as f:
+        json.dump(CONFIG, f)
+
+
+def init_config():
+    global CONFIG
+    atexit.register(write_config)
+
+    print("Initializing config...")
+    with open("config.json", "r") as f:
+        CONFIG = json.load(f)
 
 
 def process_error(cmd, statement=None):
@@ -32,7 +50,7 @@ def env_setup():
 
 def build_container():
     process_error(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros up -d --quiet-pull",
+        f"docker compose -f {COMPOSE_PATH} -p f1tenth_lab{str(CONFIG[CURRENT_LAB])} up -d --quiet-pull",
         "\nUnable to run docker command. Is docker running?\n",
     )
     print("\nDocker container built.")
@@ -40,7 +58,7 @@ def build_container():
 
 def destroy_container():
     process_error(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_gym_ros down",
+        f"docker compose -f {COMPOSE_PATH} -p f1tenth_lab{str(CONFIG[CURRENT_LAB])} down",
         "\nContainer doesn't exist.",
     )
 
@@ -66,12 +84,18 @@ def adjust_compose():
             return
         try:
             if int(inp) in range(10):
+                CONFIG[CURRENT_LAB] = int(inp)
                 break
         except ():
             continue
 
     for content in file.readlines():
-        content = re.sub(r"lab\d+_ws", "lab" + str(inp) + "_ws", content, re.DOTALL)
+        content = re.sub(
+            r"f1tenth_lab\d+",
+            "f1tenth_lab" + str(CONFIG[CURRENT_LAB]),
+            content,
+            re.DOTALL,
+        )
         full_content.append(content)
 
     file = open(COMPOSE_PATH, "w")
@@ -82,18 +106,18 @@ def adjust_compose():
 
 def exec_container():
     process_error(
-        "docker exec -it f1tenth_gym_ros-sim-1 /bin/bash",
+        f"docker exec -it f1tenth_lab{str(CONFIG[CURRENT_LAB])} /bin/bash",
         "\nContainer doesn't exist. Try building the container first [Option 3]",
     )
 
 
-def main():
-    print("\nWelcome to the f1tenth manager.\n")
+def cycle_commands():
     while True:
         print("What are you trying to do?\n\n")
         print("1. Setup my environment for me please.")
         print(
-            "2. I would like to work on lab [blank]. CAUTION THIS closes any processes running in an open container"
+            "2. I would like to work on lab [blank]."
+            " CAUTION THIS closes any processes running in an open container"
         )
         print("3. Build container.")
         print(
@@ -124,6 +148,12 @@ def main():
                 sys.exit()
         except ():
             continue
+
+
+def main():
+    print("\nWelcome to the f1tenth manager.\n")
+    init_config()
+    cycle_commands()
 
 
 if __name__ == "__main__":
