@@ -44,7 +44,6 @@ def env_setup():
     process_error(
         "git clone --quiet https://github.com/f1tenth/f1tenth_labs_openrepo.git > /dev/null"
     )
-    process_error("mv f1tenth_labs_openrepo f1tenth_gym_ros/")
     process_error("cp docker-compose.yml f1tenth_gym_ros/docker-compose.yml")
 
 
