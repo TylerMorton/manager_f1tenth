@@ -26,9 +26,8 @@ services:
     image: f1tenth_gym_ros
     build: ./
     volumes: 
+      - ../f1tenth_labs_openrepo/f1tenth_lab1/:/sim_ws/src/
       - .:/sim_ws/src/f1tenth_gym_ros
-      - ./f1tenth_labs_openrepo/lab1_ws/src/:/sim_ws/src/
-      - /sim_ws/src/f1tenth_gym_ros/f1tenth_labs_openrepo
 
     environment:
       - DISPLAY=novnc:0.0
