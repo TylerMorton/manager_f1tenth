@@ -7,20 +7,22 @@ COMPOSE_PATH = "f1tenth_gym_ros/docker-compose.yml"
 CURRENT_LAB = "current_lab"
 CONFIG = None
 
+
 def write_config():
-    print('Writing out config...')
-    
-    with open("config.json", 'w') as f:
+    print("Writing out config...")
+
+    with open("config.json", "w") as f:
         json.dump(CONFIG, f)
 
 
 def init_config():
     global CONFIG
     atexit.register(write_config)
-    
-    print('Initializing config...')
-    with open('config.json', 'r') as f:
+
+    print("Initializing config...")
+    with open("config.json", "r") as f:
         CONFIG = json.load(f)
+
 
 def env_setup():
     os.system(
@@ -34,13 +36,17 @@ def env_setup():
 
 def build_container():
     os.system(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_lab" + str(CONFIG[CURRENT_LAB]) + " up -d --quiet-pull "
+        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_lab"
+        + str(CONFIG[CURRENT_LAB])
+        + " up -d --quiet-pull "
     )
 
 
 def destroy_container():
     os.system(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_lab" + str(CONFIG[CURRENT_LAB]) + " down"
+        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_lab"
+        + str(CONFIG[CURRENT_LAB])
+        + " down"
     )
 
 
@@ -57,7 +63,9 @@ def adjust_compose():
     )
 
     while True:
-        print("\nwhich lab do you want to work on?.. Or if you want to go back type 'b'\n")
+        print(
+            "\nwhich lab do you want to work on?.. Or if you want to go back type 'b'\n"
+        )
         inp = input()
         if inp == "b":
             return
@@ -69,7 +77,12 @@ def adjust_compose():
             continue
 
     for content in file.readlines():
-        content = re.sub(r"f1tenth_lab\d+", "f1tenth_lab" + str(CONFIG[CURRENT_LAB]), content, re.DOTALL)
+        content = re.sub(
+            r"f1tenth_lab\d+",
+            "f1tenth_lab" + str(CONFIG[CURRENT_LAB]),
+            content,
+            re.DOTALL,
+        )
         full_content.append(content)
 
     file = open(COMPOSE_PATH, "w")
@@ -79,7 +92,7 @@ def adjust_compose():
 
 
 def exec_container():
-    os.system("docker exec -it f1tenth_gym_ros-sim-1 /bin/bash")
+    os.system(f"docker exec -it f1tenth_lab{str(CONFIG[CURRENT_LAB])}-sim-1 /bin/bash")
 
 
 def cycle_commands():
@@ -124,6 +137,7 @@ def cycle_commands():
 def main():
     init_config()
     cycle_commands()
+
 
 if __name__ == "__main__":
     main()
