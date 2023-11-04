@@ -127,7 +127,10 @@ def cycle_commands():
         print("0. I'm done, Goodbye.")
         print("\n\nEnter number here:\n")
 
-        inp = input()
+        while True:
+            inp = input()
+            if inp != "":
+                break
         try:
             i = int(inp)
             if i == 1:
