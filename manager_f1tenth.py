@@ -39,7 +39,6 @@ def build_container():
 
 
 def destroy_container():
-    print("Here")
     os.system(
         "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_lab" + str(CONFIG[CURRENT_LAB]) + " down"
     )
