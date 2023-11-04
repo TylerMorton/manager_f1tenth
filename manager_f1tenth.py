@@ -8,6 +8,8 @@ import subprocess
 
 COMPOSE_PATH = "f1tenth_gym_ros/docker-compose.yml"
 CURRENT_LAB = "current_lab"
+F1TENTH_LABS_OPENREPO_URI = "f1tenth_labs_openrepo_uri"
+
 CONFIG = None
 
 
@@ -42,7 +44,7 @@ def env_setup():
         "git clone --quiet https://github.com/f1tenth/f1tenth_gym_ros.git > /dev/null"
     )
     process_error(
-        "git clone --quiet https://github.com/f1tenth/f1tenth_labs_openrepo.git > /dev/null"
+        "git clone --recursive --quiet https://github.com/f1tenth/f1tenth_labs_openrepo.git > /dev/null"
     )
     process_error("cp docker-compose.yml f1tenth_gym_ros/docker-compose.yml")
 
