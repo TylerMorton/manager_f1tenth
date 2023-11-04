@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
-import os, sys, re, atexit, json
-
+import sys
+import re
+import json
+import atexit
+import subprocess
 
 COMPOSE_PATH = "f1tenth_gym_ros/docker-compose.yml"
 CURRENT_LAB = "current_lab"
@@ -24,29 +27,39 @@ def init_config():
         CONFIG = json.load(f)
 
 
+def process_error(cmd, statement=None):
+    try:
+        subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
+    except subprocess.CalledProcessError as err:
+        if statement:
+            print(statement)
+        print(f"Error statement: {err.stderr}\n")
+        sys.exit(1)
+
+
 def env_setup():
-    os.system(
+    process_error(
         "git clone --quiet https://github.com/f1tenth/f1tenth_gym_ros.git > /dev/null"
     )
-    os.system(
+    process_error(
         "git clone --quiet https://github.com/f1tenth/f1tenth_labs_openrepo.git > /dev/null"
     )
-    os.system("cp docker-compose.yml f1tenth_gym_ros/docker-compose.yml")
+    process_error("mv f1tenth_labs_openrepo f1tenth_gym_ros/")
+    process_error("cp docker-compose.yml f1tenth_gym_ros/docker-compose.yml")
 
 
 def build_container():
-    os.system(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_lab"
-        + str(CONFIG[CURRENT_LAB])
-        + " up -d --quiet-pull "
+    process_error(
+        f"docker compose -f {COMPOSE_PATH} -p f1tenth_lab{str(CONFIG[CURRENT_LAB])} up -d --quiet-pull",
+        "\nUnable to run docker command. Is docker running?\n",
     )
+    print("\nDocker container built.")
 
 
 def destroy_container():
-    os.system(
-        "docker compose -f f1tenth_gym_ros/docker-compose.yml -p f1tenth_lab"
-        + str(CONFIG[CURRENT_LAB])
-        + " down"
+    process_error(
+        f"docker compose -f {COMPOSE_PATH} -p f1tenth_lab{str(CONFIG[CURRENT_LAB])} down",
+        "\nContainer doesn't exist.",
     )
 
 
@@ -92,16 +105,19 @@ def adjust_compose():
 
 
 def exec_container():
-    os.system(f"docker exec -it f1tenth_lab{str(CONFIG[CURRENT_LAB])}-sim-1 /bin/bash")
+    process_error(
+        f"docker exec -it f1tenth_lab{str(CONFIG[CURRENT_LAB])} /bin/bash",
+        "\nContainer doesn't exist. Try building the container first [Option 3]",
+    )
 
 
 def cycle_commands():
     while True:
-        print("\nWelcome to the f1tenth manager.\n")
         print("What are you trying to do?\n\n")
         print("1. Setup my environment for me please.")
         print(
-            "2. I would like to work on lab [blank]. CAUTION THIS closes any processes running in an open container"
+            "2. I would like to work on lab [blank]."
+            " CAUTION THIS closes any processes running in an open container"
         )
         print("3. Build container.")
         print(
@@ -135,6 +151,7 @@ def cycle_commands():
 
 
 def main():
+    print("\nWelcome to the f1tenth manager.\n")
     init_config()
     cycle_commands()
 
