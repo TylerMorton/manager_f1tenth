@@ -5,9 +5,12 @@ import re
 import json
 import atexit
 import subprocess
+import os
 
 COMPOSE_PATH = "f1tenth_gym_ros/docker-compose.yml"
 CURRENT_LAB = "current_lab"
+F1TENTH_LABS_OPENREPO_URI = "f1tenth_labs_openrepo_uri"
+
 CONFIG = None
 
 
@@ -42,7 +45,7 @@ def env_setup():
         "git clone --quiet https://github.com/f1tenth/f1tenth_gym_ros.git > /dev/null"
     )
     process_error(
-        "git clone --quiet https://github.com/f1tenth/f1tenth_labs_openrepo.git > /dev/null"
+        "git clone --recursive --quiet https://github.com/f1tenth/f1tenth_labs_openrepo.git > /dev/null"
     )
     process_error("cp docker-compose.yml f1tenth_gym_ros/docker-compose.yml")
 
@@ -90,8 +93,8 @@ def adjust_compose():
 
     for content in file.readlines():
         content = re.sub(
-            r"f1tenth_lab\d+",
-            "f1tenth_lab" + str(CONFIG[CURRENT_LAB]),
+            r"lab\d+",
+            "lab" + str(CONFIG[CURRENT_LAB]),
             content,
             re.DOTALL,
         )
@@ -104,10 +107,7 @@ def adjust_compose():
 
 
 def exec_container():
-    process_error(
-        f"docker exec -it f1tenth_lab{str(CONFIG[CURRENT_LAB])} /bin/bash",
-        "\nContainer doesn't exist. Try building the container first [Option 3]",
-    )
+    os.system(f"docker exec -it f1tenth_lab{str(CONFIG[CURRENT_LAB])}-sim-1 /bin/bash")
 
 
 def cycle_commands():
